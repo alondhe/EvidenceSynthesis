@@ -6,7 +6,7 @@
 \usage{
 plotMetaAnalysisForest(logRr, logLb95Ci, logUb95Ci, labels,
   xLabel = "Relative risk", limits = c(0.1, 10), hakn = TRUE,
-  fileName = NULL)
+  fileName = NULL, tableOnly = FALSE)
 }
 \arguments{
 \item{logRr}{A numeric vector of effect estimates on the log scale.}
@@ -26,9 +26,12 @@ test statistics and confidence intervals.}
 
 \item{fileName}{Name of the file where the plot should be saved, for example 'plot.png'. See the
 function \code{ggsave} in the ggplot2 package for supported file formats.}
+
+\item{tableOnly}{Should only the underlying data table be returned?}
 }
 \value{
-A Ggplot object. Use the \code{ggsave} function to save to file.
+A Ggplot object. Use the \code{ggsave} function to save to file. 
+If tableOnly = TRUE, then the underlying data frame is returned.
 }
 \description{
 \code{plotMetaAnalysisForest} performs a meta-analysis and creates a forest plot of effect size estimates.

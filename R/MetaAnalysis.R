@@ -34,8 +34,11 @@
 #' @param fileName   Name of the file where the plot should be saved, for example 'plot.png'. See the
 #'                   function \code{ggsave} in the ggplot2 package for supported file formats.
 #'
+#'@param tableOnly   Should only the underlying data table be returned?
+#'
 #' @return
-#' A Ggplot object. Use the \code{ggsave} function to save to file.
+#' A Ggplot object. Use the \code{ggsave} function to save to file. 
+#' If tableOnly = TRUE, then the underlying data frame is returned.
 #'
 #' @references 
 #' 
@@ -55,7 +58,8 @@ plotMetaAnalysisForest <- function(logRr,
                                    xLabel = "Relative risk", 
                                    limits = c(0.1, 10), 
                                    hakn = TRUE,
-                                   fileName = NULL) {
+                                   fileName = NULL,
+                                   tableOnly = FALSE) {
     seLogRr <- (logUb95Ci-logLb95Ci) / (2 * qnorm(0.975))
     meta <- meta::metagen(logRr, seLogRr, studlab = labels, sm = "RR", hakn = hakn)
     s <- summary(meta)
@@ -125,6 +129,10 @@ plotMetaAnalysisForest <- function(logRr,
               plot.margin = grid::unit(c(0,0,0.1,0), "lines")) +
         ggplot2::labs(x="",y="") +
         ggplot2::coord_cartesian(xlim=c(1,3))
+    
+    if (tableOnly) {
+      return(data_table)
+    }
 
     plot <- gridExtra::grid.arrange(data_table, p, ncol=2)
 
