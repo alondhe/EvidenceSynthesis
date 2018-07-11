@@ -70,12 +70,6 @@ plotMetaAnalysisForest <- function(logRr,
   s <- summary(meta)
   rnd <- s$random
   
-  if ((hideStatThreshold > 0 & s$I2$TE < hideStatThreshold) | hideStatThreshold == 0) {
-    summaryLabel <- sprintf("Summary (I\u00B2 = %.2f)", s$I2$TE)  
-  } else {
-    summaryLabel <- ""
-  }
-  
   d1 <- data.frame(logRr = -100,
                    logLb95Ci = -100,
                    logUb95Ci = -100,
@@ -86,14 +80,20 @@ plotMetaAnalysisForest <- function(logRr,
                    logUb95Ci = logUb95Ci,
                    name = labels,
                    type = "db")
-  d3 <- data.frame(logRr = rnd$TE,
-                   logLb95Ci = rnd$lower,
-                   logUb95Ci = rnd$upper,
-                   name = summaryLabel,
-                   type = "ma")
-
-  d <- rbind(d1, d2, d3)
-  d$name <- factor(d$name, levels = c(summaryLabel, rev(as.character(labels)), "Source"))
+  
+  if ((hideStatThreshold > 0 & s$I2$TE < hideStatThreshold) | hideStatThreshold == 0) {
+    summaryLabel <- sprintf("Summary (I\u00B2 = %.2f)", s$I2$TE)
+    d3 <- data.frame(logRr = rnd$TE,
+                     logLb95Ci = rnd$lower,
+                     logUb95Ci = rnd$upper,
+                     name = summaryLabel,
+                     type = "ma")
+    d <- rbind(d1, d2, d3)
+    d$name <- factor(d$name, levels = c(summaryLabel, rev(as.character(labels)), "Source"))
+  } else {
+    d <- rbind(d1, d2)
+    d$name <- factor(d$name, levels = c(rev(as.character(labels)), "Source"))
+  }
 
   breaks <- c(0.1, 0.25, 0.5, 1, 2, 4, 6, 8, 10)
   p <- ggplot2::ggplot(d,ggplot2::aes(x = exp(logRr), y = name, xmin = exp(logLb95Ci), xmax = exp(logUb95Ci))) +
