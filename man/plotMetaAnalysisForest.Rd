@@ -6,7 +6,8 @@
 \usage{
 plotMetaAnalysisForest(logRr, logLb95Ci, logUb95Ci, labels,
   xLabel = "Relative risk", limits = c(0.1, 10), hakn = TRUE,
-  fileName = NULL, hideStatThreshold = 0, tableOnly = FALSE)
+  fileName = NULL, hideStatThreshold = 0, hiddenStatMessage = NULL,
+  tableOnly = FALSE)
 }
 \arguments{
 \item{logRr}{A numeric vector of effect estimates on the log scale.}
@@ -27,7 +28,9 @@ test statistics and confidence intervals.}
 \item{fileName}{Name of the file where the plot should be saved, for example 'plot.png'. See the
 function \code{ggsave} in the ggplot2 package for supported file formats.}
 
-\item{hideStatThreshold}{The threshold to hide the i^2 summary statistic value. Default is 0 (don't hide the value at all)}
+\item{hideStatThreshold}{The threshold of the i^2 value to hide the effect estimate. Default is 0 (don't hide the value at all)}
+
+\item{hiddenStatMessage}{The message to show in place of the effect estimate if the i^2 threshold isn't met}
 
 \item{tableOnly}{Should only the underlying data table be returned? Default is FALSE (no)}
 }
