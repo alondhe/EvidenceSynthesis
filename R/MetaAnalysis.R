@@ -72,14 +72,14 @@ plotMetaAnalysisForest <- function(logRr,
   s <- summary(meta)
   rnd <- s$random
   
-  d1 <- data.frame(logRr = -100,
-                   logLb95Ci = -100,
-                   logUb95Ci = -100,
+  d1 <- data.frame(logRr = as.character(-100),
+                   logLb95Ci = as.character(-100),
+                   logUb95Ci = as.character(-100),
                    name = "Source",
                    type = "header")
-  d2 <- data.frame(logRr = logRr,
-                   logLb95Ci = logLb95Ci,
-                   logUb95Ci = logUb95Ci,
+  d2 <- data.frame(logRr = as.character(logRr),
+                   logLb95Ci = as.character(logLb95Ci),
+                   logUb95Ci = as.character(logUb95Ci),
                    name = labels,
                    type = "db")
   
@@ -87,9 +87,9 @@ plotMetaAnalysisForest <- function(logRr,
   
   if ((hideStatThreshold > 0 & s$I2$TE < hideStatThreshold) | hideStatThreshold == 0) {
     
-    d3 <- data.frame(logRr = rnd$TE,
-                     logLb95Ci = rnd$lower,
-                     logUb95Ci = rnd$upper,
+    d3 <- data.frame(logRr = as.character(rnd$TE),
+                     logLb95Ci = as.character(rnd$lower),
+                     logUb95Ci = as.character(rnd$upper),
                      name = summaryLabel,
                      type = "ma")
   } else {
