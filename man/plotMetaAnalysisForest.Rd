@@ -28,9 +28,9 @@ test statistics and confidence intervals.}
 \item{fileName}{Name of the file where the plot should be saved, for example 'plot.png'. See the
 function \code{ggsave} in the ggplot2 package for supported file formats.}
 
-\item{hideStatThreshold}{The threshold of the i^2 value to hide the effect estimate. Default is 0 (don't hide the value at all)}
+\item{hideStatThreshold}{The threshold of the i^2 value to hide the pooled effect estimate. Default is 0 (don't hide the value at all)}
 
-\item{hiddenStatMessage}{The message to show in place of the effect estimate if the i^2 threshold isn't met}
+\item{hiddenStatMessage}{The message to show in place of the pooled effect estimate if the i^2 threshold isn't met}
 
 \item{tableOnly}{Should only the underlying data table be returned? Default is FALSE (no)}
 }

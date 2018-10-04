@@ -33,8 +33,8 @@
 #'                                     test statistics and confidence intervals.
 #' @param fileName                     Name of the file where the plot should be saved, for example 'plot.png'. See the
 #'                                     function \code{ggsave} in the ggplot2 package for supported file formats.
-#' @param hideStatThreshold            The threshold of the i^2 value to hide the effect estimate. Default is 0 (don't hide the value at all)
-#' @param hiddenStatMessage            The message to show in place of the effect estimate if the i^2 threshold isn't met
+#' @param hideStatThreshold            The threshold of the i^2 value to hide the pooled effect estimate. Default is 0 (don't hide the value at all)
+#' @param hiddenStatMessage            The message to show in place of the pooled effect estimate if the i^2 threshold isn't met
 #' @param tableOnly                    Should only the underlying data table be returned? Default is FALSE (no)
 #'
 #' @return
@@ -71,41 +71,35 @@ plotMetaAnalysisForest <- function(logRr,
   meta <- meta::metagen(logRr, seLogRr, studlab = labels, sm = "RR", hakn = hakn)
   s <- summary(meta)
   rnd <- s$random
+  summaryLabel <- sprintf("Summary (I\u00B2 = %.2f)", s$I2$TE)
   
-  d1 <- data.frame(logRr = as.character(-100),
-                   logLb95Ci = as.character(-100),
-                   logUb95Ci = as.character(-100),
+  d1 <- data.frame(logRr = -100,
+                   logLb95Ci = -100,
+                   logUb95Ci = -100,
                    name = "Source",
                    type = "header")
-  d2 <- data.frame(logRr = as.character(logRr),
-                   logLb95Ci = as.character(logLb95Ci),
-                   logUb95Ci = as.character(logUb95Ci),
+  d2 <- data.frame(logRr = logRr,
+                   logLb95Ci = logLb95Ci,
+                   logUb95Ci = logUb95Ci,
                    name = labels,
                    type = "db")
   
-  summaryLabel <- sprintf("Summary (I\u00B2 = %.2f)", s$I2$TE)
-  
-  if ((hideStatThreshold > 0 & s$I2$TE < hideStatThreshold) | hideStatThreshold == 0) {
-    
-    d3 <- data.frame(logRr = as.character(rnd$TE),
-                     logLb95Ci = as.character(rnd$lower),
-                     logUb95Ci = as.character(rnd$upper),
-                     name = summaryLabel,
-                     type = "ma")
-  } else {
-    
-    d3 <- data.frame(logRr = hiddenStatMessage,
-                     logLb95Ci = "",
-                     logUb95Ci = "",
-                     name = summaryLabel,
-                     type = "ma")
-  }
+  d3 <- data.frame(logRr = rnd$TE,
+                   logLb95Ci = rnd$lower,
+                   logUb95Ci = rnd$upper,
+                   name = summaryLabel,
+                   type = "ma")
   
   d <- rbind(d1, d2, d3)
   d$name <- factor(d$name, levels = c(summaryLabel, rev(as.character(labels)), "Source"))
 
   breaks <- c(0.1, 0.25, 0.5, 1, 2, 4, 6, 8, 10)
-  p <- ggplot2::ggplot(d,ggplot2::aes(x = exp(logRr), y = name, xmin = exp(logLb95Ci), xmax = exp(logUb95Ci))) +
+  
+  # if ((hideStatThreshold > 0 & s$I2$TE > hideStatThreshold)) { 
+  #   df <- df[1:nrow(df)-1,] 
+  # }
+  
+  p <- ggplot2::ggplot(d, ggplot2::aes(x = exp(logRr), y = name, xmin = exp(logLb95Ci), xmax = exp(logUb95Ci))) +
       ggplot2::geom_vline(xintercept = breaks, colour = "#AAAAAA", lty = 1, size = 0.2) +
       ggplot2::geom_vline(xintercept = 1, size = 0.5) +
       ggplot2::geom_errorbarh(height = 0.15) +
@@ -135,6 +129,13 @@ plotMetaAnalysisForest <- function(logRr,
                        label = c(as.character(d$name), labels),
                        stringsAsFactors = FALSE)
   labels$label[nrow(d) + 1] <-  paste(xLabel,"(95% CI)")
+  
+  
+  if ((hideStatThreshold > 0 & s$I2$TE > hideStatThreshold)) {
+    estimateRow <- nrow(labels)
+    labels[estimateRow, ]$label <- hiddenStatMessage
+  }
+  
   data_table <- ggplot2::ggplot(labels, ggplot2::aes(x = x, y = y, label = label)) +
       ggplot2::geom_text(size = 4, hjust=0, vjust=0.5) +
       ggplot2::geom_hline(ggplot2::aes(yintercept=nrow(d) - 0.5)) +
