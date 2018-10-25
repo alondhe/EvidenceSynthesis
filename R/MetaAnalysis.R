@@ -142,7 +142,7 @@ plotMetaAnalysisForest <- function(logRr,
   }
   
   data_table <- ggplot2::ggplot(labels, ggplot2::aes(x = x, y = y, label = label)) +
-      ggplot2::geom_text(size = 4, hjust=0, vjust=0.5) +
+      ggplot2::geom_text(size = 3, hjust=0, vjust=0.5) +
       ggplot2::geom_hline(ggplot2::aes(yintercept=nrow(d) - 0.5)) +
       ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
             panel.grid.minor = ggplot2::element_blank(),
