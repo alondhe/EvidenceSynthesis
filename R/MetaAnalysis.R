@@ -131,9 +131,14 @@ plotMetaAnalysisForest <- function(logRr,
   labels$label[nrow(d) + 1] <-  paste(xLabel,"(95% CI)")
   
   
-  if ((hideStatThreshold > 0 & s$I2$TE > hideStatThreshold)) {
+  if ((hideStatThreshold > 0 & s$I2$TE >= 0.5)) {
     estimateRow <- nrow(labels)
-    labels[estimateRow, ]$label <- hiddenStatMessage
+    
+    if (s$I2$TE >= 0.5 & s$I2$TE <= 0.6) {
+      labels[estimateRow, ]$label <- "Substantial Heterogeneity"
+    } else if (s$I2$TE > 0.6) {
+      labels[estimateRow, ]$label <- "Considerable Heterogeneity"
+    }
   }
   
   data_table <- ggplot2::ggplot(labels, ggplot2::aes(x = x, y = y, label = label)) +
@@ -161,3 +166,4 @@ plotMetaAnalysisForest <- function(logRr,
       ggplot2::ggsave(fileName, plot, width = 7, height = 1 + length(logRr) * 0.3, dpi = 400)
   return(plot)
 }
+
